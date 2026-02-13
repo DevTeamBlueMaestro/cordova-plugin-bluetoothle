@@ -4275,13 +4275,6 @@ public class BluetoothLePlugin extends CordovaPlugin {
 
       //If successfully discovered, return list of services, characteristics and descriptors
       if (status == BluetoothGatt.GATT_SUCCESS) {
-        // BM-Phase2: Request high connection priority after successful discovery
-        // Placed here (not in onConnectionStateChange) to avoid GATT operation
-        // conflicts on some Android devices during connection setup
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-          gatt.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
-        }
-
         returnObj = getDiscovery(gatt);
         callbackContext.success(returnObj);
       } else {
