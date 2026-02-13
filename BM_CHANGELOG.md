@@ -7,7 +7,14 @@
 - No code changes — baseline for bmLogger compatibility testing
 - Branch: bm-optimizations
 
+### v1-connection-priority (Phase 2)
+- **Android**: Automatic `CONNECTION_PRIORITY_HIGH` on device connection
+- Reduces connection interval from ~50ms to ~11.25ms
+- Speeds up service discovery and initial read/write operations
+- API 21+ (Lollipop) with backward-compatible version check
+- Priority reverts automatically when the system deems appropriate
+- File changed: `src/android/BluetoothLePlugin.java` (line ~4189)
+
 ### Planned Phases
-- **Phase 2**: Connection priority optimization (Android + iOS)
 - **Phase 3**: Native scan filtering for Blue Maestro devices
 - **Phase 4**: Background scanning improvements (state restoration, duty cycling)
