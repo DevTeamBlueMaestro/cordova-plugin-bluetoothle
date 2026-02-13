@@ -770,6 +770,15 @@ NSString *const operationWrite = @"write";
   //Set the callback
   scanCallback = command.callbackId;
 
+  // BM-Phase3: Capture manufacturer ID filter (-1 means no filter)
+  scanFilterManufacturerId = -1;
+  if (obj != nil) {
+    NSNumber* mfId = [obj valueForKey:@"manufacturerId"];
+    if (mfId != nil) {
+      scanFilterManufacturerId = [mfId intValue];
+    }
+  }
+
   //Send scan started status
   NSDictionary* returnObj = [NSDictionary dictionaryWithObjectsAndKeys: statusScanStarted, keyStatus, nil];
   CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:returnObj];
@@ -797,6 +806,9 @@ NSString *const operationWrite = @"write";
 
   //Remove the scan callback
   scanCallback = nil;
+
+  // BM-Phase3: Clear manufacturer filter
+  scanFilterManufacturerId = -1;
 
   //Stop the scan
   [centralManager stopScan];
@@ -2111,6 +2123,21 @@ NSString *const operationWrite = @"write";
   //If no scan callback, nothing can be returned
   if (scanCallback == nil) {
       return;
+  }
+
+  // BM-Phase3: Filter by manufacturer ID if set
+  if (scanFilterManufacturerId >= 0) {
+    NSData* mfData = [advertisementData valueForKey:CBAdvertisementDataManufacturerDataKey];
+    if (mfData == nil || mfData.length < 2) {
+      return; // No manufacturer data, skip this device
+    }
+    // Company ID is first 2 bytes, little-endian
+    uint16_t companyId = 0;
+    [mfData getBytes:&companyId length:sizeof(companyId)];
+    companyId = CFSwapInt16LittleToHost(companyId);
+    if (companyId != (uint16_t)scanFilterManufacturerId) {
+      return; // Wrong manufacturer, skip this device
+    }
   }
 
   NSMutableDictionary* advertisement = [NSMutableDictionary dictionary];

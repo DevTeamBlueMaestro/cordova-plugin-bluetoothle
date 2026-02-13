@@ -1258,6 +1258,21 @@ public class BluetoothLePlugin extends CordovaPlugin {
         scanFilter.add(builder.build());
       }
 
+      // BM-Phase3: Add manufacturer data scan filter if manufacturerId is provided
+      if (obj.has("manufacturerId")) {
+        int filterManufacturerId = obj.optInt("manufacturerId", -1);
+        if (filterManufacturerId >= 0) {
+          ScanFilter.Builder mfBuilder = new ScanFilter.Builder();
+          byte[] filterMfData = getPropertyBytes(obj, "manufacturerData");
+          if (filterMfData != null) {
+            mfBuilder.setManufacturerData(filterManufacturerId, filterMfData);
+          } else {
+            mfBuilder.setManufacturerData(filterManufacturerId, new byte[]{});
+          }
+          scanFilter.add(mfBuilder.build());
+        }
+      }
+
       /* build the ScanSetting */
       ScanSettings.Builder scanSettings = new ScanSettings.Builder();
       scanSettings.setReportDelay(0);

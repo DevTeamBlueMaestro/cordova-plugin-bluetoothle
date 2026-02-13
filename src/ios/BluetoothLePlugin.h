@@ -23,6 +23,9 @@
   NSInteger writeQChunkSize;
   NSData *writeQData;
   CBCharacteristic *currentWriteCharacteristic;
+
+  // BM-Phase3: Manufacturer ID scan filter (-1 = no filter)
+  int scanFilterManufacturerId;
 }
 
 - (void)initialize:(CDVInvokedUrlCommand *)command;
