@@ -4186,6 +4186,11 @@ public class BluetoothLePlugin extends CordovaPlugin {
 
       //Device was connected
       if (newState == BluetoothProfile.STATE_CONNECTED) {
+        // BM-Phase2: Request high connection priority for faster BLE operations
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+          gatt.requestConnectionPriority(BluetoothGatt.CONNECTION_PRIORITY_HIGH);
+        }
+
         if (callbackContext == null) {
           return;
         }
